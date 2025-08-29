@@ -73,12 +73,19 @@
     socket.on('win', message => {
     if(message===socket.id){
       document.querySelector('.win').textContent="You Won !!!"
-    } 
-    else  document.querySelector('.win').textContent="You Lost !!!"  
-    cells.forEach((cell) => {
-    cell.style.pointerEvents= 'none'
-    cell.style.backgroundColor = '#4b8a48'
+          cells.forEach((cell) => {
+          cell.style.pointerEvents= 'none'
+          cell.style.backgroundColor = '#4b8a48'
     })
+    } 
+    else{
+       document.querySelector('.win').textContent="You Lost !!!"  
+       cells.forEach((cell) => {
+       cell.style.pointerEvents= 'none'
+       cell.style.backgroundColor = 'red'
+    })
+    }
+
   })
 
    socket.on('draw', message => {
