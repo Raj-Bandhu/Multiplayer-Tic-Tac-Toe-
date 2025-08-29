@@ -26,11 +26,7 @@ let game = [
 io.on("connection", (socket) => {
   console.log("A user connected", socket.id)
     
-    socket.on("disconnect", () => {
-    console.log("User disconnected", socket.id)
-    if (players.P1?.id === socket.id) delete players.P1
-    if (players.P2?.id === socket.id) delete players.P2
-})
+
 
 
 
@@ -44,17 +40,26 @@ io.on("connection", (socket) => {
 
   }
   else{
-    players.P2 = {
+    if(players.P2){
+        players.P1 = {
+        id : socket.id,
+        symbol: "X"
+    }
+    }
+    else if(players.P1){
+         players.P2 = {
         id : socket.id,
         symbol: "O"
     }
+    }
+
  
-    console.log("Player 2 Connected")
+    console.log("new player connected")
     console.log(players)
   }
 
-  playerTurn = players.P1.id
-  symbol = players.P1.symbol
+  playerTurn = players.P1.id || null
+  symbol = players.P1.symbol || null
   socket.on("cellClick", (cellId) => {
     if(playerTurn ===  socket.id){
     console.log("Cell clicked:", cellId)
@@ -85,6 +90,16 @@ io.on("connection", (socket) => {
 
 
   });
+      socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id)
+    if (players.P1?.id === socket.id) delete players.P1
+    if (players.P2?.id === socket.id) delete players.P2
+    game = [
+    [null,null,null],
+    [null,null,null],
+    [null,null,null],
+]
+})
 
 });
 const PORT = process.env.PORT || 3000
