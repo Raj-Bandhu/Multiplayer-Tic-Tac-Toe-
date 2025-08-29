@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatting</title>
+      <style>
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+      width: max-content;
+      margin: 50px auto;
+    }
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      border: 2px solid black;
+      cursor: pointer;
+      user-select: none;
+    }
+    .win{
+      display: flex;
+      align-self: center;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+     <div class="board">
+    <!-- Row 1 -->
+    <div class="cell" id="r1c1"></div>
+    <div class="cell" id="r1c2"></div>
+    <div class="cell" id="r1c3"></div>
+
+    <!-- Row 2 -->
+    <div class="cell" id="r2c1"></div>
+    <div class="cell" id="r2c2"></div>
+    <div class="cell" id="r2c3"></div>
+
+    <!-- Row 3 -->
+    <div class="cell" id="r3c1"></div>
+    <div class="cell" id="r3c2"></div>
+    <div class="cell" id="r3c3"></div>
+  </div>
+  <h1 class="win"></h1>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  socket.on("cellUpdate", (cellId, symbol) => {
+    const cell = document.getElementById(cellId);
+    console.log("Cell updated:", cellId);
+    if (cell) {
+      cell.textContent = symbol;
+    }
+  });
+
+  const cells = document.querySelectorAll(".cell");
+  cells.forEach(cell => {
+    cell.addEventListener("click", () => {
+      const cellId = cell.id;
+      socket.emit("cellClick", cellId);
+    });
+  });
+
+    socket.on('win', message => {
+    if(message===socket.id){
+      document.querySelector('.win').textContent="You Won !!!"
+    } 
+    else  document.querySelector('.win').textContent="You Lost !!!"  
+    cells.forEach((cell) => {
+    cell.style.pointerEvents= 'none'
+    cell.style.backgroundColor = '#4b8a48'
+    })
+  })
+
+   socket.on('draw', message => {
+    document.querySelector('.win').textContent="Its a Draw!!!"
+    cells.forEach((cell) => {
+    cell.style.pointerEvents= 'none'
+    cell.style.backgroundColor = '#4b8a48'
+    })
+  })
+
+</script>
+</html>
